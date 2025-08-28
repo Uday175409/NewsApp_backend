@@ -1,5 +1,5 @@
 import axios from "axios";
-import { user as User } from "../models/User.model.js";
+import { user as User } from "../models/user.model.js";
 import {
   VALID_CATEGORIES,
   COUNTRY_CODES,

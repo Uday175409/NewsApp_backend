@@ -1,5 +1,5 @@
 import { article as Article } from "../models/article.model.js";
-import { user as User } from "../models/User.model.js";
+import { user as User } from "../models/user.model.js";
 import { comment as Comment } from "../models/comment.model.js";
 
 // Add a new comment to an article

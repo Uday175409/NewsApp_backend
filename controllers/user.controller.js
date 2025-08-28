@@ -124,7 +124,7 @@ export const verifyCode = async (req, res) => {
       .json({ message: "Error verifying code", error: error.message });
   }
 };
-// import { user as User } from "../models/User.model.js";
+// import { user as User } from "../models/user.model.js";
 
 // REGISTER
 export const register = async (req, res) => {
