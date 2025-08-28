@@ -74,11 +74,8 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/images", imageRoutes);
 app.use("/api/admin", adminRoutes);
 
-app.listen(port, () => {
-  connectDB();
-  console.log(`Connected to MongoDB-------------------------------`);
-  console.log(`Server is running on http://localhost:${port}`);
-});
-// API_KEY=pub_cc0f4bd99293447cbf76f7846db10774
-// MONGO_URL=mongodb://127.0.0.1:27017/NewsApp
-// SECRET_KEY='This is some key'
+// Connect to database immediately
+connectDB();
+
+// Export the app for Vercel
+export default app;
