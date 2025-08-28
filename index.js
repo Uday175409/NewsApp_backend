@@ -23,7 +23,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ✅ Serve uploads folder statically with proper MIME types
-app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
+const uploadsPath = process.env.NODE_ENV === 'production' ? '/tmp' : path.join(__dirname, "uploads");
+app.use("/uploads", express.static(uploadsPath, {
   setHeaders: (res, path) => {
     const ext = path.split('.').pop().toLowerCase();
     switch (ext) {

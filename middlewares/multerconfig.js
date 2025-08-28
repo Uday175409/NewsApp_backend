@@ -2,10 +2,10 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Create uploads folder if it doesn't exist
-const uploadFolder = "uploads/";
+// Use /tmp directory for serverless environments (Vercel)
+const uploadFolder = process.env.NODE_ENV === 'production' ? '/tmp/' : 'uploads/';
 if (!fs.existsSync(uploadFolder)) {
-  fs.mkdirSync(uploadFolder);
+  fs.mkdirSync(uploadFolder, { recursive: true });
 }
 
 // Storage config
