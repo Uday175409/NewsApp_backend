@@ -4,7 +4,8 @@ class ApiKeyRotator {
       process.env.API_KEY,
       process.env.API_KEY1,
       process.env.API_KEY2,
-      process.env.API_KEY3
+      process.env.API_KEY3,
+      process.env.API_KEY4
     ].filter(key => key); // Remove undefined keys
     
     this.currentIndex = 0;
