@@ -22,39 +22,18 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Serve uploads folder statically with proper MIME types
-const uploadsPath = process.env.NODE_ENV === 'production' ? '/tmp' : path.join(__dirname, "uploads");
-app.use("/uploads", express.static(uploadsPath, {
-  setHeaders: (res, path) => {
-    const ext = path.split('.').pop().toLowerCase();
-    switch (ext) {
-      case 'jpg':
-      case 'jpeg':
-        res.setHeader('Content-Type', 'image/jpeg');
-        break;
-      case 'png':
-        res.setHeader('Content-Type', 'image/png');
-        break;
-      case 'gif':
-        res.setHeader('Content-Type', 'image/gif');
-        break;
-      case 'webp':
-        res.setHeader('Content-Type', 'image/webp');
-        break;
-      default:
-        res.setHeader('Content-Type', 'image/jpeg');
-    }
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
-  }
-}));
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL || "http://localhost:5173","http://localhost:5173"],
+    origin: [
+      process.env.FRONTEND_URL || "http://localhost:5173",
+      "http://localhost:5173",
+      "https://your-frontend-app.vercel.app", // Add your actual frontend URL here
+      "https://*.vercel.app" // Allow all Vercel apps (less secure but works for testing)
+    ],
     credentials: true,
   })
 );

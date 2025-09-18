@@ -1,54 +1,9 @@
 import express from 'express';
-import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import ImageController from '../controllers/image.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import upload from '../middlewares/multerconfig.js';
 
 const router = express.Router();
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/temp'); // Temporary local storage before Cloudinary upload
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  // Check file type
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed!'), false);
-  }
-};
-
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-    files: 5 // Maximum 5 files at once
-  }
-});
-
-// Create a more flexible upload middleware that accepts any field name
-const flexibleUpload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-    files: 5 // Maximum 5 files at once
-  }
-});
 
 // Routes
 
@@ -61,7 +16,7 @@ router.post('/test-upload', isAuthenticated, (req, res, next) => {
   console.log('Headers:', req.headers);
   console.log('Content-Type:', req.get('content-type'));
   next();
-}, flexibleUpload.any(), (req, res) => {
+}, upload.any(), (req, res) => {
   console.log('Files:', req.files);
   console.log('File:', req.file);
   console.log('Body:', req.body);
