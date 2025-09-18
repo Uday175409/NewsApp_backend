@@ -18,6 +18,10 @@ dist
 dist-ssr
 *.local
 
+# Uploads (exclude temp files but keep directory)
+uploads/temp/*
+!uploads/temp/.gitkeep
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

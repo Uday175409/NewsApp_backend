@@ -3,7 +3,61 @@ import fs from 'fs';
 
 class CloudinaryService {
   /**
-   * Upload image to Cloudinary
+   * Upload image to Cloudinary from buffer (memory)
+   * @param {Buffer} buffer - Image buffer from multer memory storage
+   * @param {Object} options - Upload options
+   * @returns {Promise<Object>} Upload result
+   */
+  static async uploadImageFromBuffer(buffer, options = {}) {
+    try {
+      const {
+        folder = 'news-app',
+        transformation = {},
+        resourceType = 'image',
+        quality = 'auto',
+        fetchFormat = 'auto'
+      } = options;
+
+      const uploadOptions = {
+        folder,
+        resource_type: resourceType,
+        quality,
+        fetch_format: fetchFormat,
+        ...transformation
+      };
+
+      // Upload buffer directly to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }).end(buffer);
+      });
+
+      return {
+        success: true,
+        data: {
+          public_id: result.public_id,
+          secure_url: result.secure_url,
+          url: result.url,
+          width: result.width,
+          height: result.height,
+          format: result.format,
+          bytes: result.bytes,
+          created_at: result.created_at
+        }
+      };
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
+      return {
+        success: false,
+        error: error.message || 'Upload failed'
+      };
+    }
+  }
+
+  /**
+   * Upload image to Cloudinary (legacy method for file paths)
    * @param {string} filePath - Local file path
    * @param {Object} options - Upload options
    * @returns {Promise<Object>} Upload result
@@ -59,7 +113,38 @@ class CloudinaryService {
   }
 
   /**
-   * Upload multiple images
+   * Upload multiple images from buffers
+   * @param {Array} files - Array of file objects with buffers
+   * @param {Object} options - Upload options
+   * @returns {Promise<Array>} Array of upload results
+   */
+  static async uploadMultipleImagesFromBuffers(files, options = {}) {
+    try {
+      const uploadPromises = files.map(file => 
+        this.uploadImageFromBuffer(file.buffer, options)
+      );
+      
+      const results = await Promise.allSettled(uploadPromises);
+      
+      return results.map((result, index) => {
+        if (result.status === 'fulfilled') {
+          return result.value;
+        } else {
+          console.error(`Upload failed for file ${files[index].originalname}:`, result.reason);
+          return {
+            success: false,
+            error: result.reason.message,
+            fileName: files[index].originalname
+          };
+        }
+      });
+    } catch (error) {
+      throw new Error(`Multiple image upload failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Upload multiple images (legacy method for file paths)
    * @param {Array} filePaths - Array of local file paths
    * @param {Object} options - Upload options
    * @returns {Promise<Array>} Array of upload results

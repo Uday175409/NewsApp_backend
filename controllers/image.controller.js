@@ -70,10 +70,10 @@ class ImageController {
       }
 
       console.log("☁️ IMAGE UPLOAD - Starting Cloudinary upload...");
-      console.log("📂 File path being uploaded:", req.file.path);
+      console.log("📂 File buffer size:", req.file.buffer.length, "bytes");
 
-      const result = await CloudinaryService.uploadImage(
-        req.file.path,
+      const result = await CloudinaryService.uploadImageFromBuffer(
+        req.file.buffer,
         uploadOptions
       );
 
@@ -165,9 +165,8 @@ class ImageController {
         "☁️ MULTIPLE UPLOAD - Starting batch upload to Cloudinary..."
       );
 
-      const filePaths = req.files.map((file) => file.path);
-      const results = await CloudinaryService.uploadMultipleImages(
-        filePaths,
+      const results = await CloudinaryService.uploadMultipleImagesFromBuffers(
+        req.files,
         uploadOptions
       );
 
